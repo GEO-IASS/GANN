@@ -51,11 +51,7 @@ function [Fitness] = TrainInternal(x, inputimgs, hsz, sz, nimg, sigmoidactivatio
     Diff = input(1:end-1,:) - output;
     colnorm=sqrt(sum(Diff.^2,1));
     Fitness = sum(colnorm)/numimages;
-    
-%   Calculate the first norm
-%   firstnorm=sum(abs(x));
-%   Fitness = (0.99)*Fitness + (0.01)*firstnorm;
-    
+     
 end
 
 function [Output] = GenOutInternal(x, inputimgs, hsz, sz, nimg, sigmoidactivation)
