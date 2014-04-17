@@ -1,4 +1,4 @@
-function [ W, outputimgs ] = TrainGAAutoEncoder( inputimgs, hratio)
+function [ W, outputimgs ] = TrainGAAutoEncoder(inputimgs, hratio, sigmoidactivation)
 
     global numimages;
 
@@ -8,7 +8,7 @@ function [ W, outputimgs ] = TrainGAAutoEncoder( inputimgs, hratio)
     inputimgs = inputimgs';
 
     Nvars = hsz*(sz+1) + sz; %+(sz)*(hsz+1);
-    f = @(x)TrainInternal(x, inputimgs, hsz, sz, nimg);
+    f = @(x)TrainInternal(x, inputimgs, hsz, sz, nimg, sigmoidactivation);
     options = gaoptimset('Display', 'iter', 'Generations', 1000, 'PopulationSize', 30, 'CrossoverFraction', 0.5, 'EliteCount', 2, 'TolFun', 1e-9, 'UseParallel', 'never',...
         'MutationFcn', {@mutationgaussian, 1, 1});%,...
     [W, FVAL, EXITFLAG, OUTPUT, POPULATION] = ga(f, Nvars, [], [], [], [], ones(1,Nvars)*-.05, ones(1,Nvars)*.05, [], [], options);
@@ -22,12 +22,12 @@ function [ W, outputimgs ] = TrainGAAutoEncoder( inputimgs, hratio)
 %     [W] = ga(f, Nvars, [], [], [], [], [], [], [], [], options);
 %     toc
     
-    outputimgs = GenOutInternal(W, inputimgs, hsz, sz, nimg);
+    outputimgs = GenOutInternal(W, inputimgs, hsz, sz, nimg, sigmoidactivation);
     outputimgs = outputimgs';
 
 end
 
-function [Fitness] = TrainInternal(x, inputimgs, hsz, sz, nimg)
+function [Fitness] = TrainInternal(x, inputimgs, hsz, sz, nimg, sigmoidactivation)
 
     global numimages;   
 
@@ -43,7 +43,9 @@ function [Fitness] = TrainInternal(x, inputimgs, hsz, sz, nimg)
     input = inputimgs;
     input = [input; ones(1,numimages)];
     output = matrix1*input;
-    output = 1./(1+exp(-output)); 
+    if sigmoidactivation
+        output = 1./(1+exp(-output));
+    end
     output = [output; ones(1,numimages)];
     output = matrix2*output;
     Diff = input(1:end-1,:) - output;
@@ -56,7 +58,7 @@ function [Fitness] = TrainInternal(x, inputimgs, hsz, sz, nimg)
     
 end
 
-function [Output] = GenOutInternal(x, inputimgs, hsz, sz, nimg)
+function [Output] = GenOutInternal(x, inputimgs, hsz, sz, nimg, sigmoidactivation)
  
     global numimages;
 
@@ -69,7 +71,9 @@ function [Output] = GenOutInternal(x, inputimgs, hsz, sz, nimg)
     input = inputimgs;
     input = [input; ones(1,numimages)];
     output = matrix1*input;
-    output = 1./(1+exp(-output)); 
+    if sigmoidactivation
+        output = 1./(1+exp(-output)); 
+    end
     Output = output;
     
 end
