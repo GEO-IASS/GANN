@@ -1,11 +1,13 @@
 % test script
-% check
 
 close all
 clearvars
 
+diary
+diary on
+
 global numimages;
-numimages = 50;
+numimages = 100;
 
 [testimages, testlabels, trainimages, trainlabels] = readMNIST();
 
@@ -28,4 +30,6 @@ save C:\encode1.mat
 save C:\encode2.mat 
 [ W3, Data4 ] = TrainGAAutoEncoder(Data3, .20);
 save C:\encode3.mat
+[ W4, Data5 ] = TrainGAAutoEncoder(Data4, .25);
+save C:\encode4.mat
 
