@@ -1,4 +1,5 @@
 % test script
+% check
 
 close all
 clearvars
